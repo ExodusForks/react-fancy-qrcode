@@ -41,7 +41,10 @@ export default React.memo(
       }
 
       // Convert the QRCode data into a matrix of pixels
-      const matrix = generateDataMatrix(value, errorCorrection);
+      const matrix = React.useMemo(
+        () => generateDataMatrix(value, errorCorrection),
+        [value, errorCorrection]
+      );
       if (!matrix.length) {
         return null;
       }

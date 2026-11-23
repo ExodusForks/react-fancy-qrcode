@@ -1,8 +1,8 @@
 import React from "react";
 
+import { createDotsPath } from "../dots-path";
 import { generateDataMatrix } from "../utils";
 import { QRCodeRef, QRCodeSVGProps } from "../types";
-import Dot from "./Dot";
 import Logo from "./Logo";
 import PositionPattern from "./PositionPattern";
 
@@ -41,7 +41,10 @@ export default React.memo(
       }
 
       // Convert the QRCode data into a matrix of pixels
-      const matrix = generateDataMatrix(value, errorCorrection);
+      const matrix = React.useMemo(
+        () => generateDataMatrix(value, errorCorrection),
+        [value, errorCorrection]
+      );
       if (!matrix.length) {
         return null;
       }
@@ -78,7 +81,19 @@ export default React.memo(
         logoStopCell = sideCount - logoStartCell;
       }
 
-      const { Svg, Defs, G, Rect, LinearGradient, Stop } = svgDom;
+      const dotsPath = value
+        ? createDotsPath({
+            matrix,
+            cellSize,
+            dotScale,
+            dotRadius,
+            viewportHeight: size + margin * 2,
+            logoStartCell,
+            logoStopCell,
+          })
+        : "";
+
+      const { Svg, Defs, G, Rect, Path, LinearGradient, Stop } = svgDom;
       return (
         <Svg
           viewBox={[
@@ -176,27 +191,7 @@ export default React.memo(
 
           {/*  QRCode Data Dots */}
           <G>
-            {matrix.map((rowData, row) =>
-              rowData.map(
-                (pixelValue, column) =>
-                  Boolean(value) && (
-                    <Dot
-                      value={pixelValue}
-                      row={row}
-                      column={column}
-                      cellSize={cellSize}
-                      color={color as string}
-                      logoStartCell={logoStartCell}
-                      logoStopCell={logoStopCell}
-                      sideCount={sideCount}
-                      dotScale={dotScale || 1}
-                      dotRadius={dotRadius || 0}
-                      svgDom={svgDom}
-                      key={`${row}-${column}`}
-                    />
-                  )
-              )
-            )}
+            {Boolean(dotsPath) && <Path d={dotsPath} fill={color as string} />}
           </G>
 
           {/* Logo */}

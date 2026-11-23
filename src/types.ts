@@ -133,6 +133,7 @@ export type SVGObject = {
   Defs: React.ElementType; // React.SVGProps<SVGDefsElement>;
   G: React.ElementType; // React.SVGProps<SVGGElement>;
   Rect: React.ElementType; // React.SVGProps<SVGRectElement>;
+  Path: React.ElementType; // React.SVGProps<SVGPathElement>;
   LinearGradient: React.ElementType; // React.SVGProps<SVGLineElement>;
   Stop: React.ElementType; // React.SVGProps<SVGStopElement>;
   Image: React.ElementType; // React.SVGProps<SVGImageElement>;
